@@ -63,12 +63,19 @@ SYMBOL_THICKNESS = 0.4;
 SYMBOL_SPACING = 1.4;
 DEBUG_SYMBOL = 0;
 
+// Text
+TEXT_THICKNESS = 0.4;
+TEXT_SCALE = 3.0;
+TEXT_BOTTOM_BASE_SPACING_RATE = 0.6;
+TEXT_SCALE_RATE = 0.25;
+
 // Some rendering options
 APPLY_KEYBOARD_ANGLE = 0;
 APPLY_KEY_ANGLE = 1;
 APPLY_CYLINDRICAL_DISH = 1;
 APPLY_SYMBOL = 0;
 APPLY_SUPPORT = 0;
+APPLY_TEXT = 1;
 
 // Support
 SUPPORT_WIDTH = 3.5;
@@ -80,8 +87,9 @@ include<modules.scad>;
 
 keycap_rows = [0, 1, 2, 3];
 keycap_symbols = [4];
+keycap_texts = ["E", "D", "C", "B"];
 
 for (i = [0:len(keycap_rows) - 1]) {
 	translate([i * bottom_base_width + i * SUPPORT_LENGTH, 0, 0])
-		key(keycap_rows[i], keycap_symbols[i]);
+		key(keycap_rows[i], keycap_symbols[i], keycap_texts[i]);
 }
