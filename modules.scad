@@ -53,7 +53,7 @@ module key_shape(top_base_translate, top_base_height_back, top_base_angle, top_b
 }
 
 // Basic function that generates the key
-module key(row, symbol_number) {
+module key(row, symbol_number, keycap_text) {
 	// Row dimensions
 	KEY_ROW_DIMENSIONS = ROW_DIMENSIONS[row];
 	top_base_height_back = KEY_ROW_DIMENSIONS[0];
@@ -129,6 +129,10 @@ module key(row, symbol_number) {
 		rotate([0, 0, -90])
 			support(bottom_base_angle_back);
 	}
+
+	if (APPLY_TEXT) {
+		front_text(keycap_text, top_base_length, top_base_translate, top_base_height_back, top_base_height_front);
+	}
 }
 
 // Generates the support used for CNC machining the key
@@ -187,4 +191,18 @@ module symbol(top_base_rotated_length, symbol_number) {
 	rotate([0, 0, 180])
 	linear_extrude(height=SYMBOL_THICKNESS)
 		import(file=symbol_path);
+}
+
+module front_text(value, top_base_length, top_base_translate, top_base_height_back, top_base_height_front) {
+	text_angle = atan2(top_base_height_front, bottom_base_length - top_base_length - top_base_translate);
+	front_length = top_base_height_front / sin(text_angle);
+	text_size = front_length * TEXT_SCALE_RATE;
+	text_z_offset = front_length * TEXT_BOTTOM_BASE_SPACING_RATE * sin(text_angle);
+	text_y_offset = bottom_base_length + TEXT_THICKNESS - text_z_offset / tan(text_angle);
+
+	translate([bottom_base_width/2, text_y_offset, text_z_offset])
+	rotate([180-text_angle, 0, 0])
+	mirror([1, 0, 0])
+	linear_extrude(height = TEXT_THICKNESS)
+		text(value, size = text_size, font="Liberation Sans:style=Bold", valign="bottom", halign="center");
 }
