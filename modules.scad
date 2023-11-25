@@ -83,6 +83,8 @@ module key(row, symbol_number, keycap_text) {
 				translate([KEY_THICKNESS, KEY_THICKNESS, 0])
 				scale(key_scale)
 					key_shape(top_base_translate, top_base_height_back, top_base_angle, top_base_rotated_length, back_cylinder_translate, rotated_cylinder_translate, cylinder_dish_radius);
+
+
 			}
 
 			difference() {
@@ -128,22 +130,6 @@ module key(row, symbol_number, keycap_text) {
 			support(bottom_base_angle_back);
 	}
 
-    if (APPLY_FDM_SUPPORT) {
-        translate([0, KEY_THICKNESS/2, 0])
-            fdm_support(-CONNECTOR_HEIGHT, bottom_base_width);
-
-        translate([0, bottom_base_length - KEY_THICKNESS/2, 0])
-            fdm_support(-CONNECTOR_HEIGHT, bottom_base_width);
-
-        translate([KEY_THICKNESS/2, KEY_THICKNESS, 0])
-        rotate([0, 0, 90])
-            fdm_support(-CONNECTOR_HEIGHT, bottom_base_length - KEY_THICKNESS * 2);
-
-        translate([bottom_base_length - KEY_THICKNESS/2, KEY_THICKNESS, 0])
-        rotate([0, 0, 90])
-            fdm_support(-CONNECTOR_HEIGHT, bottom_base_length - KEY_THICKNESS * 2);
-    }
-
 	if (APPLY_TEXT) {
 		front_text(keycap_text, top_base_length, top_base_translate, top_base_height_back, top_base_height_front);
 	}
@@ -157,26 +143,6 @@ module support(bottom_base_angle_side) {
 	rotate([90, 0, 0])
 	linear_extrude(height=SUPPORT_WIDTH)
 		polygon([[0, SUPPORT_HEIGHT], [support_base_translate, 0], [support_base_translate + SUPPORT_LENGTH, 0], [support_base_translate + SUPPORT_LENGTH, SUPPORT_HEIGHT]]);
-}
-
-// Generates the support used for FDM
-module fdm_support(support_height, bottom_base_length) {
-    fdm_support_cnt = floor((bottom_base_length - FDM_SUPPORT_WIDTH) / (FDM_SUPPORT_WIDTH + FDM_SUPPORT_SPACING)) + 1;
-    fdm_x_offset = (bottom_base_length - fdm_support_cnt * (FDM_SUPPORT_WIDTH + FDM_SUPPORT_SPACING) + FDM_SUPPORT_WIDTH) / 2 + FDM_SUPPORT_WIDTH;
-    for (i = [0:fdm_support_cnt - 1]) {
-        translate([i * (FDM_SUPPORT_WIDTH + FDM_SUPPORT_SPACING) + fdm_x_offset, 0, -support_height]) {
-            difference() {
-                cylinder(h=support_height - FDM_SUPPORT_THICKNESS/2, r=FDM_SUPPORT_WIDTH/2);
-                cylinder(h=support_height - FDM_SUPPORT_THICKNESS/2, r=(FDM_SUPPORT_WIDTH/2 - FDM_SUPPORT_THICKNESS));
-            }
-            translate([0, 0, support_height - FDM_SUPPORT_THICKNESS/2])
-            rotate_extrude()
-            translate([(FDM_SUPPORT_WIDTH - FDM_SUPPORT_THICKNESS)/2, 0, 0])
-            circle(FDM_SUPPORT_THICKNESS/2);
-        }
-    }
-    translate([fdm_x_offset, 0, -support_height])
-        cube([bottom_base_length - fdm_x_offset * 2, FDM_SUPPORT_THICKNESS, FDM_SUPPORT_THICKNESS]);
 }
 
 // Generates the connector for the key
