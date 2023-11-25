@@ -84,8 +84,12 @@ module key(row, symbol_number, keycap_text) {
 				scale(key_scale)
 					key_shape(top_base_translate, top_base_height_back, top_base_angle, top_base_rotated_length, back_cylinder_translate, rotated_cylinder_translate, cylinder_dish_radius);
 
+				if (APPLY_TEXT) {
+					front_text(keycap_text, top_base_length, top_base_translate, top_base_height_back, top_base_height_front);
+				}
 
 			}
+
 
 			difference() {
 				translate([bottom_base_width/2, bottom_base_length/2, CONNECTOR_HEIGHT])
@@ -128,10 +132,6 @@ module key(row, symbol_number, keycap_text) {
 		translate([bottom_base_width/2, 0, 0])
 		rotate([0, 0, -90])
 			support(bottom_base_angle_back);
-	}
-
-	if (APPLY_TEXT) {
-		front_text(keycap_text, top_base_length, top_base_translate, top_base_height_back, top_base_height_front);
 	}
 }
 
@@ -198,9 +198,9 @@ module front_text(value, top_base_length, top_base_translate, top_base_height_ba
 	front_length = top_base_height_front / sin(text_angle);
 	text_size = front_length * TEXT_SCALE_RATE;
 	text_z_offset = front_length * TEXT_BOTTOM_BASE_SPACING_RATE * sin(text_angle);
-	text_y_offset = bottom_base_length + TEXT_THICKNESS - text_z_offset / tan(text_angle);
+	text_y_offset = bottom_base_length - text_z_offset / tan(text_angle);
 
-	translate([bottom_base_width/2, text_y_offset, text_z_offset])
+	translate([bottom_base_width/2, text_y_offset + 0.01, text_z_offset])
 	rotate([180-text_angle, 0, 0])
 	mirror([1, 0, 0])
 	linear_extrude(height = TEXT_THICKNESS)
